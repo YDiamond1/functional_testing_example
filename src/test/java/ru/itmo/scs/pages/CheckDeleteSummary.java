@@ -1,0 +1,89 @@
+package ru.itmo.scs.pages;
+
+import org.apache.log4j.Logger;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.openqa.selenium.By;
+import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.chrome.ChromeOptions;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
+import ru.itmo.scs.Constants;
+import ru.itmo.scs.Context;
+import ru.itmo.scs.exceptions.InvalidPropertiesException;
+import ru.itmo.scs.utils.Properties;
+
+import java.time.Duration;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
+
+public class CheckDeleteSummary {
+    private static final Logger logger = Logger.getLogger(CheckDeleteSummary.class);
+
+    public Context context;
+    public List<WebDriver> driverList;
+    static List<JavascriptExecutor> jsList;
+
+    @BeforeEach
+    public void setUp() {
+        context = new Context();
+        driverList = new ArrayList<>();
+        jsList = new ArrayList<>();
+        try {
+            Properties.getInstance().reading(context);
+        } catch (IllegalArgumentException e) {
+            logger.error(e.getMessage());
+        }
+
+//        if (context.getGeckodriver() != null) {
+//            System.setProperty(Constants.WEBDRIVER_FIREFOX_DRIVER, context.getGeckodriver());
+//            FirefoxProfile firefoxProfile = new FirefoxProfile(new File("cmyxm934.TestFirefox"));
+//            FirefoxOptions firefoxOptions = new FirefoxOptions();
+//            firefoxOptions.setProfile(firefoxProfile);
+//            driverList.add(new FirefoxDriver(firefoxOptions));
+//        }
+        if (context.getChromedriver() != null) {
+            System.setProperty(Constants.WEBDRIVER_CHROME_DRIVER, context.getChromedriver());
+            ChromeOptions options = new ChromeOptions();
+            options.addArguments("--user-data-dir=C:\\Users\\YDiamond\\AppData\\Local\\Google\\Chrome\\User Data\\", "C:\\Users\\YDiamond\\AppData\\Local\\Google\\Chrome\\User Data\\Profile 1\\");
+            driverList.add(new ChromeDriver(options));
+        }
+        if (driverList.isEmpty()) throw new InvalidPropertiesException();
+        driverList.forEach(driver -> {
+            jsList.add((JavascriptExecutor) driver);
+            driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(3).toMillis(), TimeUnit.MILLISECONDS);
+        });
+
+    }
+
+    @AfterEach
+    public void tearDown() {
+        driverList.forEach(WebDriver::quit);
+    }
+
+    @Test
+    public void checkDelete(){
+        driverList.forEach(driver -> {
+
+            driver.get("https://hh.ru/");
+            driver.manage().window().maximize();
+
+            WebElement element = driver.findElement(By.xpath("//a[contains(text(), 'Мои резюме')]"));
+            ((JavascriptExecutor) driver).executeScript("arguments[0].click();", element);
+
+            element = driver.findElement(By.xpath("//span[contains(text(), 'Начинающий специалист')]"));
+            ((JavascriptExecutor) driver).executeScript("arguments[0].click();", element);
+
+            driver.findElement(By.xpath("//button[contains(@data-qa, 'resume-delete')]")).click();
+            driver.findElement(By.xpath("//button[contains(@data-qa, 'resume-delete-confirm')]")).click();
+            driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(2).toMillis(), TimeUnit.MILLISECONDS);
+            Assertions.assertTrue(driver.findElement(By.xpath("//h1[contains(text(), 'Ваше резюме')]")).isDisplayed());
+        });
+    }
+}
