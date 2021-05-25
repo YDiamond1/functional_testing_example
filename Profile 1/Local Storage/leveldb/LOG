@@ -1,0 +1,8 @@
+2021/05/22-19:40:27.058 4a6c Creating DB C:\Users\YDiamond\AppData\Local\Google\Chrome\User Data\Profile 1\Local Storage\leveldb since it was missing.
+2021/05/22-19:40:27.073 4a6c Reusing MANIFEST C:\Users\YDiamond\AppData\Local\Google\Chrome\User Data\Profile 1\Local Storage\leveldb/MANIFEST-000001
+2021/05/22-19:40:59.847 4a6c Level-0 table #5: started
+2021/05/22-19:41:00.715 4a6c Level-0 table #5: 202534 bytes OK
+2021/05/22-19:41:00.732 4a6c Delete type=0 #3
+2021/05/22-19:42:54.744 1694 Level-0 table #7: started
+2021/05/22-19:42:54.746 1694 Level-0 table #7: 36677 bytes OK
+2021/05/22-19:42:54.747 1694 Delete type=0 #4

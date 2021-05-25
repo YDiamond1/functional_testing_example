@@ -1,0 +1,11 @@
+8
+
+https://spb.hh.ru/
+https://spb.hh.ru/cacheStaticResources.sw.js?staticHost=https://i.hh.ru
+true
+{712336a6-3938-4c80-8521-3fd58edb621e}
+0
+1621699032729485
+1621699032730446
+1621699032672751
+#
